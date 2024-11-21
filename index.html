@@ -56,14 +56,14 @@
                         const lon = position.coords.longitude;
                         alert("Latitud: " + lat + ", Longitud: " + lon);
 
-                        // Llamada a la API de Wikipedia para obtener lugares cercanos
-                        const url = `https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=${lat}%7C${lon}&gslimit=50&format=json&origin=*`;
+                        // Llamada a la API de Wikipedia para obtener lugares cercanos con categorías específicas
+                        const url = `https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=${lat}%7C${lon}&gslimit=50&format=json&origin=*&gscategory=monumentos|playas|calas`;
 
                         fetch(url)
                             .then(response => response.json())
                             .then(data => {
                                 const lugares = data.query.geosearch;
-                                let infoLugares = '<h2>Lugares Cercanos:</h2><ul>';
+                                let infoLugares = '<h2>Lugares Cercanos (Monumentos y Calas):</h2><ul>';
                                 lugares.forEach(lugar => {
                                     infoLugares += `<li><strong>${lugar.title}</strong><br>Distancia: ${lugar.dist} metros</li>`;
                                 });
@@ -90,7 +90,7 @@
 </head>
 <body>
     <header>
-
+        Wiki 24
     </header>
     <main>
         <div id="lugaresCercanos"></div>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página Web Básica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            color: white;
+            font-size: 1.5em;
+        }
+        main {
+            padding: 20px;
+        }
+        footer {
+            background-color: #4CAF50;
+            padding: 10px;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #ffffff;
+            margin: 10px auto;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            text-align: left;
+        }
+        li strong {
+            color: #4CAF50;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        alert("Latitud: " + lat + ", Longitud: " + lon);
+
+                        // Llamada a la API de Wikipedia para obtener lugares cercanos
+                        const url = `https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=${lat}%7C${lon}&gslimit=50&format=json&origin=*`;
+
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                const lugares = data.query.geosearch;
+                                let infoLugares = '<h2>Lugares Cercanos:</h2><ul>';
+                                lugares.forEach(lugar => {
+                                    infoLugares += `<li><strong>${lugar.title}</strong><br>Distancia: ${lugar.dist} metros</li>`;
+                                });
+                                infoLugares += '</ul>';
+                                document.getElementById('lugaresCercanos').innerHTML = infoLugares;
+                            })
+                            .catch(error => {
+                                console.error('Error al obtener los lugares cercanos:', error);
+                            });
+                    },
+                    function(error) {
+                        if (error.code === error.PERMISSION_DENIED) {
+                            alert("Por favor, permite el acceso a la ubicación para continuar.");
+                        } else {
+                            alert("Error al obtener la localización: " + error.message);
+                        }
+                    }
+                );
+            } else {
+                alert("La geolocalización no es soportada por este navegador.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        Bienvenido a Mi Página Web
+    </header>
+    <main>
+        <h1>Hola Mundo</h1>
+        <p>Esta es una página web básica creada solo con HTML y un poco de CSS.</p>
+        <p>Aquí puedes escribir cualquier información que desees compartir.</p>
+        <div id="lugaresCercanos"></div>
+    </main>
+    <footer>
+        &copy; 2024 Mi Página Web Básica
+    </footer>
+</body>
+</html>

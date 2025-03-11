@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inicio de Sesión</title>
-  <!-- Cargar Material Design Icons -->
+  <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!-- Cargar Material Design 3 desde CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/@material/web-components@0.0.1/dist/material-web-components.min.css" rel="stylesheet">
+  <!-- Material Components Web CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-components-web@latest/dist/material-components-web.min.css">
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -43,17 +43,40 @@
   <div class="login-container">
     <h2>Iniciar sesión</h2>
     <div class="md-field">
-      <input type="text" id="username" class="md-input" placeholder="Usuario" required>
+      <label class="mdc-text-field mdc-text-field--outlined" style="width:100%;">
+        <input type="text" id="username" class="mdc-text-field__input" placeholder="Usuario" required>
+        <span class="mdc-notched-outline">
+          <span class="mdc-notched-outline__leading"></span>
+          <span class="mdc-notched-outline__notch">
+            <span class="mdc-floating-label">Usuario</span>
+          </span>
+          <span class="mdc-notched-outline__trailing"></span>
+        </span>
+      </label>
     </div>
     <div class="md-field">
-      <input type="password" id="password" class="md-input" placeholder="Contraseña" required>
+      <label class="mdc-text-field mdc-text-field--outlined" style="width:100%;">
+        <input type="password" id="password" class="mdc-text-field__input" placeholder="Contraseña" required>
+        <span class="mdc-notched-outline">
+          <span class="mdc-notched-outline__leading"></span>
+          <span class="mdc-notched-outline__notch">
+            <span class="mdc-floating-label">Contraseña</span>
+          </span>
+          <span class="mdc-notched-outline__trailing"></span>
+        </span>
+      </label>
     </div>
-    <button class="md-button md-raised" onclick="handleLogin()">Ingresar</button>
+    <button class="mdc-button mdc-button--raised md-button" onclick="handleLogin()">
+      <span class="mdc-button__label">Ingresar</span>
+    </button>
   </div>
 
-  <!-- Cargar Material Design 3 desde CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@material/web-components@0.0.1/dist/material-web-components.min.js"></script>
+  <!-- Material Components Web JS -->
+  <script src="https://cdn.jsdelivr.net/npm/material-components-web@latest/dist/material-components-web.min.js"></script>
   <script>
+    // Inicializa los componentes de Material
+    mdc.autoInit();
+    
     function handleLogin() {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;

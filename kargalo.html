@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de Sesión</title>
+  <!-- Cargar Material Design Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Cargar Material Design 3 desde CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/@material/web-components@0.0.1/dist/material-web-components.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+    .login-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .md-field {
+      margin-bottom: 16px;
+    }
+    .md-button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Iniciar sesión</h2>
+    <div class="md-field">
+      <input type="text" id="username" class="md-input" placeholder="Usuario" required>
+    </div>
+    <div class="md-field">
+      <input type="password" id="password" class="md-input" placeholder="Contraseña" required>
+    </div>
+    <button class="md-button md-raised" onclick="handleLogin()">Ingresar</button>
+  </div>
+
+  <!-- Cargar Material Design 3 desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@material/web-components@0.0.1/dist/material-web-components.min.js"></script>
+  <script>
+    function handleLogin() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      // Aquí puedes agregar la lógica para procesar el inicio de sesión
+      alert(`Usuario: ${username}\nContraseña: ${password}`);
+    }
+  </script>
+</body>
+</html>

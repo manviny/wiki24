@@ -65,7 +65,8 @@
                                 const lugares = data.query.geosearch;
                                 let infoLugares = '<h2>Lugares Cercanos (Monumentos y Calas):</h2><ul>';
                                 lugares.forEach(lugar => {
-                                    infoLugares += `<li><strong>${lugar.title}</strong><br>Distancia: ${lugar.dist} metros</li>`;
+                                    const thumbnail = lugar.thumbnail ? `<img src="${lugar.thumbnail.source}" alt="${lugar.title}">` : '';
+                                    infoLugares += `<li><a href="https://en.wikipedia.org/?curid=${lugar.pageid}" target="_blank">${thumbnail}<strong>${lugar.title}</strong><br>Distancia: ${lugar.dist} metros</li>`;
                                 });
                                 infoLugares += '</ul>';
                                 document.getElementById('lugaresCercanos').innerHTML = infoLugares;

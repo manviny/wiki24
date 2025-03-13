@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki 24</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            color: white;
+            font-size: 1.5em;
+        }
+        main {
+            padding: 20px;
+        }
+        footer {
+            background-color: #4CAF50;
+            padding: 10px;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #ffffff;
+            margin: 10px auto;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            text-align: left;
+        }
+        li strong {
+            color: #4CAF50;
+        }
+        img {
+            display: block;
+            margin-bottom: 10px;
+            max-width: 100%;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const url = `https://en.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}|${lon}&ggsradius=10000&ggslimit=50&ggsprop=dist&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                const pages = Object.values(data.query.pages);
+                                let infoLugares = '<h2>Lugares Cercanos (Monumentos y Calas):</h2><ul>';
+                                pages.forEach(page => {
+                                    const thumbnail = page.thumbnail ? `<img src="${page.thumbnail.source}" alt="${page.title}">` : '';
+                                    const dist = page.coordinates && page.coordinates[0].dist ? page.coordinates[0].dist : 'N/A';
+                                    infoLugares += `<li>${thumbnail}<strong>${page.title}</strong><br>Distancia: ${dist} metros</li>`;
+                                });
+                                infoLugares += '</ul>';
+                                document.getElementById('lugaresCercanos').innerHTML = infoLugares;
+                            })
+                            .catch(error => console.error('Error al obtener los lugares cercanos:', error));
+                    },
+                    function(error) {
+                        if (error.code === error.PERMISSION_DENIED) {
+                            alert("Permite el acceso a la ubicación para continuar.");
+                        } else {
+                            alert("Error al obtener la localización: " + error.message);
+                        }
+                    }
+                );
+            } else {
+                alert("La geolocalización no es soportada por este navegador.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        Wiki 24
+    </header>
+    <main>
+        <div id="lugaresCercanos"></div>
+    </main>
+    <footer>
+        &copy; 2024 Mi Página Web Básica
+    </footer>
+</body>
+</html>

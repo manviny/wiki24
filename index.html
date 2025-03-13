@@ -57,8 +57,7 @@
                         alert("Latitud: " + lat + ", Longitud: " + lon);
 
                         // Llamada a la API de Wikipedia para obtener lugares cercanos con categorías específicas
-                        const url = `https://es.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=${lat}%7C${lon}&gslimit=50&format=json&origin=*&gscategory=monumentos|playas|calas`;
-
+                        const url = `https://es.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}%7C${lon}&ggsradius=10000&ggslimit=50&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
 
                         fetch(url)
                             .then(response => response.json())

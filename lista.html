@@ -59,7 +59,7 @@
                     function(position) {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-                        const url = `https://en.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}|${lon}&ggsradius=10000&ggslimit=50&ggsprop=dist&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
+                        const url = `https://es.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}|${lon}&ggsradius=10000&ggslimit=50&ggsprop=dist&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
                         fetch(url)
                             .then(response => response.json())
                             .then(data => {

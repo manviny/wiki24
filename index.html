@@ -71,8 +71,8 @@
                                 let infoLugares = '<h2>Lugares Cercanos (Monumentos y Calas):</h2><ul>';
                                 pages.forEach(page => {
                                     const thumbnail = page.thumbnail ? `<img src="${page.thumbnail.source}" alt="${page.title}">` : '';
-                                    const dist = page.coordinates && page.coordinates[0].dist ? page.coordinates[0].dist : 'N/A';
-                                    infoLugares += `<li>${thumbnail}<a href="https://es.wikipedia.org/?curid=${page.pageid}" target="_blank"><strong>${page.title}</strong><br>Distancia: ${dist} metros</a></li>`;
+                                    const dist = page.coordinates && page.coordinates[0].dist ? `${page.coordinates[0].dist} metros` : 'Distancia no disponible';
+                                    infoLugares += `<li>${thumbnail}<a href="https://es.wikipedia.org/?curid=${page.pageid}" target="_blank"><strong>${page.title}</strong><br>${dist}</a></li>`;
                                 });
                                 infoLugares += '</ul>';
                                 document.getElementById('lugaresCercanos').innerHTML = infoLugares;

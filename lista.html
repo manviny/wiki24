@@ -51,6 +51,10 @@
             margin-bottom: 10px;
             max-width: 100%;
         }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
     <script>
         window.onload = function() {
@@ -59,7 +63,7 @@
                     function(position) {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-                        const url = `https://es.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}|${lon}&ggsradius=10000&ggslimit=50&ggsprop=dist&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
+                        const url = `https://en.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}|${lon}&ggsradius=10000&ggslimit=50&ggsprop=dist&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
                         fetch(url)
                             .then(response => response.json())
                             .then(data => {
@@ -68,7 +72,7 @@
                                 pages.forEach(page => {
                                     const thumbnail = page.thumbnail ? `<img src="${page.thumbnail.source}" alt="${page.title}">` : '';
                                     const dist = page.coordinates && page.coordinates[0].dist ? page.coordinates[0].dist : 'N/A';
-                                    infoLugares += `<li>${thumbnail}<strong>${page.title}</strong><br>Distancia: ${dist} metros</li>`;
+                                    infoLugares += `<li><a href="https://en.wikipedia.org/?curid=${page.pageid}" target="_blank">${thumbnail}<strong>${page.title}</strong><br>Distancia: ${dist} metros</a></li>`;
                                 });
                                 infoLugares += '</ul>';
                                 document.getElementById('lugaresCercanos').innerHTML = infoLugares;

@@ -46,6 +46,15 @@
         li strong {
             color: #4CAF50;
         }
+        img {
+            display: block;
+            margin-bottom: 10px;
+            max-width: 100%;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
     <script>
         window.onload = function() {
@@ -54,28 +63,21 @@
                     function(position) {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-                        alert("Latitud: " + lat + ", Longitud: " + lon);
-
-                        // Llamada a la API de Wikipedia para obtener lugares cercanos con categorías específicas
                         const url = `https://es.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}%7C${lon}&ggsradius=10000&ggslimit=50&prop=pageimages|coordinates&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
-
                         fetch(url)
                             .then(response => response.json())
                             .then(data => {
-                                const lugares = data.query.geosearch;
+                                const pages = Object.values(data.query.pages);
                                 let infoLugares = '<h2>Lugares Cercanos (Monumentos y Calas):</h2><ul>';
-                                lugares.forEach(lugar => {
-                                    const thumbnail = lugar.thumbnail ? `<img src="${lugar.thumbnail.source}" alt="${lugar.title}">` : '';
-                                    infoLugares += `<li><a href="https://en.wikipedia.org/?curid=${lugar.pageid}" target="_blank">${thumbnail}<strong>${lugar.title}</strong><br>Distancia: ${lugar.dist} metros</li>`;
+                                pages.forEach(page => {
+                                    const thumbnail = page.thumbnail ? `<img src="${page.thumbnail.source}" alt="${page.title}">` : '';
+                                    const dist = page.coordinates && page.coordinates[0].dist ? page.coordinates[0].dist : 'N/A';
+                                    infoLugares += `<li>${thumbnail}<a href="https://es.wikipedia.org/?curid=${page.pageid}" target="_blank"><strong>${page.title}</strong><br>Distancia: ${dist} metros</a></li>`;
                                 });
                                 infoLugares += '</ul>';
                                 document.getElementById('lugaresCercanos').innerHTML = infoLugares;
                             })
-                            .catch(error => {
-                                console.error('Error al obtener los lugares cercanos:', error);
-                            });
-                        
-
+                            .catch(error => console.error('Error al obtener los lugares cercanos:', error));
                     },
                     function(error) {
                         if (error.code === error.PERMISSION_DENIED) {

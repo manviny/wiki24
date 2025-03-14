@@ -30,7 +30,7 @@ async function obtenerCoordenadas(ciudad) {
 }
 
 // Paso 2: Buscar lugares cercanos usando la API de MediaWiki
-async function buscarLugaresCercanos(lat, lon, radio = 5000) {
+async function buscarLugaresCercanos(lat, lon, radio = 15000) {
     const url = `https://es.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${lat}|${lon}&gsradius=${radio}&gslimit=100&format=json&origin=*`;
     try {
         const response = await axios.get(url);
@@ -69,7 +69,7 @@ async function getGeolocalizacion() {
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject, {
                     enableHighAccuracy: true,
-                    timeout: 15000,
+                    timeout: 5000,
                     maximumAge: 0
                 });
             });

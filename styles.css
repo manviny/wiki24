@@ -1,0 +1,141 @@
+/* styles.css */
+
+/* Estilo para el contenedor principal ajustado para dispositivos móviles */
+main.mdc-top-app-bar--fixed-adjust {
+    padding: 16px;
+    margin: 0 auto;
+    max-width: 600px; /* Ancho máximo para una mejor legibilidad en móviles */
+}
+
+/* Estilo para cada elemento de la lista */
+.mdc-list-item {
+    align-items: flex-start;
+    border-bottom: 1px solid #e0e0e0; /* Línea divisoria entre elementos */
+    padding: 16px 0;
+}
+
+/* Estilo para la imagen de la miniatura */
+.mdc-list-item__graphic {
+    width: 56px;
+    height: 56px;
+    border-radius: 4px; /* Esquinas ligeramente redondeadas */
+    margin-right: 16px;
+    object-fit: cover; /* Mantiene la proporción de la imagen */
+}
+
+/* Estilo para el texto principal (título) */
+.mdc-list-item__primary-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 8px;
+}
+
+/* Estilo para el texto secundario (extracto) */
+.mdc-list-item__secondary-text {
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.5;
+}
+
+/* Estilo para el contenedor de texto dentro del elemento de la lista */
+.mdc-list-item__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Estilo para el contenedor de la lista */
+.mdc-list {
+    padding: 0;
+    list-style-type: none; /* Elimina los puntos de lista predeterminados */
+}
+
+/* Estilo para el título de la aplicación en la barra superior */
+.mdc-top-app-bar__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Estilo para la barra superior */
+.mdc-top-app-bar {
+    background-color: #6200ee; /* Color principal de la barra superior */
+}
+
+/* Estilo para el cuerpo de la página */
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif; /* Fuente recomendada por Material Design */
+    background-color: #f5f5f5; /* Color de fondo suave */
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+}
+.card {
+    width: 100%;
+    max-width: 640px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 16px;
+}
+.card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+.card-content {
+    padding: 16px;
+}
+.card-title {
+    font-size: 1.5em;
+    font-weight: 500;
+    margin: 0 0 8px;
+}
+.card-text {
+    font-size: 1em;
+    color: #666;
+}
+
+        /* Estilos generales para el botón */
+        .md3-button {
+            display: block; /* El botón ocupa el ancho completo del contenedor */
+            width: calc(100% - 40px); /* Ancho completo menos márgenes */
+            margin: 20px; /* Márgenes alrededor del botón */
+            padding: 10px 24px;
+            border: 2px solid #6200EE; /* Borde de 2px con color primario */
+            border-radius: 12px; /* Esquinas redondeadas */
+            font-size: 16px;
+            font-weight: 500;
+            text-transform: none; /* Texto en minúsculas */
+            color: #6200EE; /* Color del texto */
+            background-color: transparent; /* Fondo transparente */
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Efecto hover para el botón outlined */
+        .md3-button:hover {
+            background-color: rgba(98, 0, 238, 0.1); /* Fondo con transparencia */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra */
+        }
+
+        /* Efecto active para el botón outlined */
+        .md3-button:active {
+            background-color: rgba(98, 0, 238, 0.2); /* Fondo más oscuro al presionar */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }

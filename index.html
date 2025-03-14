@@ -38,7 +38,6 @@
         // Si 'ciudad' está vacía, obtener la geolocalización del usuario
         try {
             const posicion = await getGeolocalizacion();
-            alert(posicion)
             lat = posicion.lat;
             lon = posicion.lon;
         } catch (error) {

@@ -11,7 +11,7 @@ if (isNode) {
     axios = window.axios;
 }
 
-// Paso 1: Obtener coordenadas de una ciudad usando Nominatim (OpenStreetMap)
+// Función para obtener coordenadas de una ciudad usando Nominatim (OpenStreetMap)
 async function obtenerCoordenadas(ciudad) {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(ciudad)}&format=json`;
     try {
@@ -19,50 +19,50 @@ async function obtenerCoordenadas(ciudad) {
             headers: isNode ? { "User-Agent": "MiAplicacion/1.0" } : {}
         });
         if (response.data.length > 0) {
-            const { lat, lon } = response.data[0];
-            return { lat, lon };
+            return { lat: response.data[0].lat, lon: response.data[0].lon };
         } else {
             throw new Error("No se encontraron coordenadas para la ciudad especificada.");
         }
     } catch (error) {
-        throw new Error(`Error al obtener coordenadas: ${error.message}`);
+        console.error(`Error al obtener coordenadas: ${error.message}`);
+        return null; // En caso de error, devolver nulo
     }
 }
 
-// Paso 2: Buscar lugares cercanos usando la API de MediaWiki
+// Función para buscar lugares cercanos usando la API de MediaWiki
 async function buscarLugaresCercanos(lat, lon, radio = 5000) {
     const url = `https://es.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${lat}|${lon}&gsradius=${radio}&gslimit=100&format=json&origin=*`;
     try {
         const response = await axios.get(url);
         return response.data.query.geosearch || [];
     } catch (error) {
-        throw new Error(`Error al buscar lugares cercanos: ${error.message}`);
+        console.error(`Error al buscar lugares cercanos: ${error.message}`);
+        return [];
     }
 }
 
-// Paso 3: Obtener extracto de Wikipedia
+// Función para obtener extracto e imagen de Wikipedia
 async function obtenerExtractoWikipedia(titulo) {
-    // const url = `https://es.wikipedia.org/w/api.php?action=query&format=json&titles=${encodeURIComponent(titulo)}&prop=extracts|pageimages&exintro=true&explaintext=true&piprop=thumbnail&pithumbsize=100&origin=*`;
     const url = `https://es.wikipedia.org/w/api.php?action=query&format=json&titles=${encodeURIComponent(titulo)}&prop=extracts|pageimages&exintro=true&explaintext=true&piprop=original|thumbnail&pithumbsize=640&origin=*`;
-
     try {
         const response = await axios.get(url);
         const pageId = Object.keys(response.data.query.pages)[0];
         if (pageId !== "-1") {
             const page = response.data.query.pages[pageId];
-            const extracto = page.extract || 'No hay información disponible.';
-            const miniatura = page.thumbnail ? page.thumbnail.source : 'No hay miniatura disponible.';
-            return { extracto, miniatura };
+            return {
+                extracto: page.extract || 'No hay información disponible.',
+                miniatura: page.thumbnail ? page.thumbnail.source : 'https://via.placeholder.com/640x480?text=No+Image+Available'
+            };
         } else {
-            return { extracto: "No se encontró información en Wikipedia.", miniatura: null };
+            return { extracto: "No se encontró información en Wikipedia.", miniatura: 'https://via.placeholder.com/640x480?text=No+Image+Available' };
         }
     } catch (error) {
-        throw new Error(`Error al obtener información de Wikipedia: ${error.message}`);
+        console.error(`Error al obtener información de Wikipedia: ${error.message}`);
+        return { extracto: "Error al obtener información.", miniatura: 'https://via.placeholder.com/640x480?text=No+Image+Available' };
     }
 }
 
-
-// Paso 3: Obtener extracto de Wikipedia
+// Función para obtener la geolocalización del usuario
 async function getGeolocalizacion() {
     if ('geolocation' in navigator) {
         try {
@@ -73,89 +73,90 @@ async function getGeolocalizacion() {
                     maximumAge: 0
                 });
             });
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            console.log(`Latitud: ${lat}, Longitud: ${lon}`);
-            return { lat, lon };
+            return { lat: position.coords.latitude, lon: position.coords.longitude };
         } catch (error) {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    console.warn('Permiso denegado. Obteniendo ubicación aproximada...');
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    console.warn('La información de ubicación no está disponible. Obteniendo ubicación aproximada...');
-                    break;
-                case error.TIMEOUT:
-                    console.warn('La solicitud para obtener la ubicación ha caducado. Obteniendo ubicación aproximada...');
-                    break;
-                default:
-                    console.warn('Se ha producido un error desconocido. Obteniendo ubicación aproximada...');
-                    break;
-            }
+            console.warn(`Error al obtener la geolocalización del usuario: ${error.message}`);
             return obtenerUbicacionPorIP();
         }
     } else {
-        console.warn('Geolocalización no es compatible con este navegador. Obteniendo ubicación aproximada...');
+        console.warn('Geolocalización no es compatible con este navegador.');
         return obtenerUbicacionPorIP();
     }
 }
 
-
+// Función para obtener la ubicación por IP si falla la geolocalización
 async function obtenerUbicacionPorIP() {
     try {
-        const response = await fetch('http://ip-api.com/json/');
+        const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
-        const lat = data.lat;
-        const lon = data.lon;
-        console.log(`Latitud aproximada: ${lat}, Longitud: ${lon}`);
-        return { lat, lon };
-    } catch (ipError) {
-        console.error('La geolocalización basada en IP ha fallado:', ipError);
-        throw ipError;
+        return { lat: data.latitude, lon: data.longitude };
+    } catch (error) {
+        console.error('La geolocalización basada en IP ha fallado:', error);
+        return { lat: 0, lon: 0 }; // Devolver coordenadas neutrales en caso de error
     }
 }
 
+// Función para mostrar lugares cercanos en la interfaz de usuario
+async function mostrarLugaresCercanos(ciudad = "") {
+    let lat, lon;
+
+    if (ciudad) {
+        const coordenadas = await obtenerCoordenadas(ciudad);
+        lat = coordenadas.lat;
+        lon = coordenadas.lon;
+    } else {
+        const posicion = await getGeolocalizacion();
+        lat = posicion.lat;
+        lon = posicion.lon;
+    }
+
+    if (lat && lon) {
+        const lugares = await buscarLugaresCercanos(lat, lon);
+        const resultadosDiv = document.getElementById('resultados');
+        resultadosDiv.innerHTML = '';
+
+        for (const lugar of lugares) {
+            const titulo = lugar.title || 'Desconocido';
+            const { extracto, miniatura } = await obtenerExtractoWikipedia(titulo);
+            const urlArticulo = `https://es.wikipedia.org/wiki/${encodeURIComponent(titulo)}`;
+            const lugarCard = document.createElement('a');
+            lugarCard.href = urlArticulo;
+            lugarCard.target = '_blank';
+            lugarCard.className = 'card';
+            lugarCard.innerHTML = `
+                <img src="${miniatura}" alt="${titulo}">
+                <div class="card-content">
+                    <h2 class="card-title">${titulo}</h2>
+                    <p class="card-text">${extracto.split(' ').slice(0, 50).join(' ')}...</p>
+                </div>
+            `;
+            resultadosDiv.appendChild(lugarCard);
+        }
+    } else {
+        console.error("No se pudo obtener la ubicación para buscar lugares cercanos.");
+    }
+}
+
+// Función para inicializar los eventos de la interfaz de usuario
+function inicializarEventosUI() {
+    const btnObtenerUbicacion = document.getElementById('obtenerUbicacion');
+    if (btnObtenerUbicacion) {
+        btnObtenerUbicacion.addEventListener('click', () => mostrarLugaresCercanos());
+    }
+
+    document.addEventListener('DOMContentLoaded', () => mostrarLugaresCercanos()); // Mostrar lugares cercanos al cargar la página sin necesidad de una ciudad específica
+}
 
 // Exportar funciones según el entorno
-if (isNode) {
-    module.exports = {
-        obtenerCoordenadas,
-        buscarLugaresCercanos,
-        obtenerExtractoWikipedia
-    };
-} else {
+if (!isNode) {
     window.obtenerCoordenadas = obtenerCoordenadas;
     window.buscarLugaresCercanos = buscarLugaresCercanos;
     window.obtenerExtractoWikipedia = obtenerExtractoWikipedia;
+    window.mostrarLugaresCercanos = mostrarLugaresCercanos;
+    window.inicializarEventosUI = inicializarEventosUI;
 }
 
-// Función principal para Node.js
-async function main() {
-    const ciudad = "Jávea";
-    try {
-        const { lat, lon } = await obtenerCoordenadas(ciudad);
-        console.log(`Coordenadas de ${ciudad}: Latitud = ${lat}, Longitud = ${lon}`);
-
-        const lugares = await buscarLugaresCercanos(lat, lon);
-        if (lugares.length > 0) {
-            console.log(`Lugares cercanos a ${ciudad}:`);
-            for (const lugar of lugares) {
-                const titulo = lugar.title || 'Desconocido';
-                console.log(`Lugar: ${titulo}`);
-                const { extracto, miniatura } = await obtenerExtractoWikipedia(titulo);
-                console.log(`Extracto: ${extracto}`);
-                console.log(`Miniatura: ${miniatura}`);
-                console.log("-".repeat(40));
-            }
-        } else {
-            console.log("No se encontraron lugares cercanos.");
-        }
-    } catch (error) {
-        console.error(`Error: ${error.message}`);
-    }
-}
-
-// Ejecutar la función principal en Node.js
-if (isNode) {
-    main();
+// Inicializar eventos UI cuando el script se carga en un navegador
+if (typeof window !== 'undefined') {
+    inicializarEventosUI();
 }

@@ -139,3 +139,19 @@ body {
             background-color: rgba(98, 0, 238, 0.2); /* Fondo más oscuro al presionar */
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
+
+        
+        .botones-container {
+            display: flex;
+            width: 100%;
+        }
+        
+        .botones-container .md3-button {
+            flex: 1;
+            margin: 0.5rem;
+            text-align: center;
+            background-color: #6200ea;
+            color: white;
+            border: none;
+            cursor: pointer;            
+        }

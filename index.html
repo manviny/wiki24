@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -14,141 +14,78 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-    <button id="obtenerUbicacion" class="md3-button md3-button-filled">cerca de mí</button>
+    <button  id="obtenerUbicacion" class="md3-button md3-button-filled">cerca de mí</button>
     <div class="container" id="resultados"></div>
 
     <script>
-        // Función para obtener la geolocalización del usuario
-        async function getGeolocalizacion() {
-            return new Promise((resolve, reject) => {
-                if ('geolocation' in navigator) {
-                    navigator.geolocation.getCurrentPosition(
-                        position => {
-                            const lat = position.coords.latitude;
-                            const lon = position.coords.longitude;
-                            resolve({ lat, lon });
-                        },
-                        error => {
-                            switch(error.code) {
-                                case error.PERMISSION_DENIED:
-                                    alert('Permiso denegado. Obteniendo ubicación aproximada...');
-                                    obtenerUbicacionPorIP().then(resolve).catch(reject);
-                                    break;
-                                case error.POSITION_UNAVAILABLE:
-                                    alert('La información de ubicación no está disponible. Obteniendo ubicación aproximada...');
-                                    obtenerUbicacionPorIP().then(resolve).catch(reject);
-                                    break;
-                                case error.TIMEOUT:
-                                    alert('La solicitud para obtener la ubicación ha caducado. Obteniendo ubicación aproximada...');
-                                    obtenerUbicacionPorIP().then(resolve).catch(reject);
-                                    break;
-                                case error.UNKNOWN_ERROR:
-                                    alert('Se ha producido un error desconocido. Obteniendo ubicación aproximada...');
-                                    obtenerUbicacionPorIP().then(resolve).catch(reject);
-                                    break;
-                            }
-                        },
-                        {
-                            enableHighAccuracy: true,
-                            timeout: 5000,
-                            maximumAge: 0
-                        }
-                    );
-                } else {
-                    console.warn('Geolocalización no es compatible con este navegador. Obteniendo ubicación aproximada...');
-                    obtenerUbicacionPorIP().then(resolve).catch(reject);
-                }
-            });
-        }
-
-        // Función para obtener la ubicación aproximada mediante la IP
-        async function obtenerUbicacionPorIP() {
-            try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                const lat = data.latitude;
-                const lon = data.longitude;
-                return { lat, lon };
-            } catch (error) {
-                console.error('La geolocalización basada en IP ha fallado:', error);
-                throw error;
-            }
-        }
-
-        // Función para buscar lugares cercanos
-        async function buscarLugaresCercanos(lat, lon) {
-            // Implementa aquí la lógica para buscar lugares cercanos utilizando las coordenadas
-            // Por ejemplo, puedes hacer una solicitud a una API que proporcione esta información
-            // y retornar los resultados en un array.
-            return [];
-        }
-
-        // Función para obtener el extracto de Wikipedia
-        async function obtenerExtractoWikipedia(titulo) {
-            // Implementa aquí la lógica para obtener el extracto de Wikipedia
-            // Puedes utilizar la API de Wikipedia para obtener esta información
-            return { extracto: '', miniatura: '' };
-        }
-
-        // Función para mostrar lugares cercanos
         async function mostrarLugaresCercanos() {
-            let lat, lon;
-            const ciudad = ''; // Asigna aquí el valor de la ciudad si está disponible
+    const ciudad = ""; // Asigna aquí el valor de la ciudad o déjalo vacío si no hay una ciudad específica
 
-            if (ciudad) {
-                // Si 'ciudad' tiene un valor, obtener sus coordenadas
-                try {
-                    const coordenadas = await obtenerCoordenadas(ciudad);
-                    lat = coordenadas.lat;
-                    lon = coordenadas.lon;
-                } catch (error) {
-                    console.error(`Error al obtener coordenadas de la ciudad: ${error.message}`);
-                    return; // Salir de la función si ocurre un error
-                }
-            } else {
-                // Si 'ciudad' está vacía, obtener la geolocalización del usuario
-                try {
-                    const posicion = await getGeolocalizacion();
-                    lat = posicion.lat;
-                    lon = posicion.lon;
-                } catch (error) {
-                    console.error(`Error al obtener la geolocalización del usuario: ${error.message}`);
-                    return; // Salir de la función si ocurre un error
-                }
+    let lat, lon;
+
+    if (ciudad) {
+        // Si 'ciudad' tiene un valor, obtener sus coordenadas
+        try {
+            const coordenadas = await obtenerCoordenadas(ciudad);
+            lat = coordenadas.lat;
+            lon = coordenadas.lon;
+        } catch (error) {
+            console.error(`Error al obtener coordenadas de la ciudad: ${error.message}`);
+            return; // Salir de la función si ocurre un error
+        }
+    } else {
+        // Si 'ciudad' está vacía, obtener la geolocalización del usuario
+        try {
+            const posicion = await getGeolocalizacion();
+            lat = posicion.lat;
+            lon = posicion.lon;
+        } catch (error) {
+            console.error(`Error al obtener la geolocalización del usuario: ${error.message}`);
+            return; // Salir de la función si ocurre un error
+        }
+    }
+
+    // Si se han obtenido 'lat' y 'lon', buscar lugares cercanos
+    if (lat !== undefined && lon !== undefined) {
+        try {
+            const lugares = await buscarLugaresCercanos(lat, lon);
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
+
+            for (const lugar of lugares) {
+                const titulo = lugar.title || 'Desconocido';
+                const { extracto, miniatura } = await obtenerExtractoWikipedia(titulo);
+                const urlArticulo = `https://es.wikipedia.org/wiki/${encodeURIComponent(titulo)}`;
+                const lugarCard = document.createElement('a');
+                lugarCard.href = urlArticulo;
+                lugarCard.target = '_blank';
+                lugarCard.className = 'card';
+                lugarCard.innerHTML = `
+                    <img src="${miniatura}" alt="${titulo}">
+                    <div class="card-content">
+                        <h2 class="card-title">${titulo}</h2>
+                        <p class="card-text">${extracto.split(' ').slice(0, 100).join(' ')}...</p>
+                    </div>
+                `;
+                resultadosDiv.appendChild(lugarCard);
             }
-
-            // Si se han obtenido 'lat' y 'lon', buscar lugares cercanos
-            if (lat !== undefined && lon !== undefined) {
-                try {
-                    const lugares = await buscarLugaresCercanos(lat, lon);
-                    const resultadosDiv = document.getElementById('resultados');
-                    resultadosDiv.innerHTML = '';
-
-                    for (const lugar of lugares) {
-                        const titulo = lugar.title || 'Desconocido';
-                        const { extracto, miniatura } = await obtenerExtractoWikipedia(titulo);
-                        const urlArticulo = `https://es.wikipedia.org/wiki/${encodeURIComponent(titulo)}`;
-                        const lugarCard = document.createElement('a');
-                        lugarCard.href = urlArticulo;
-                        lugarCard.target = '_blank';
-                        lugarCard.className = 'card';
-                        lugarCard.innerHTML = `
-                            <img src="${miniatura}" alt="${titulo}">
-                            <div class="card-content">
-                                <h2 class="card-title">${titulo}</h2>
-                                <p class="card-text">${extracto.split(' ').slice(0, 100).join(' ')}...</p>
-                            </div>
-                        `;
-                        resultadosDiv.appendChild(lugarCard);
-                    }
-                } catch (error) {
-                    console.error(`Error al buscar lugares cercanos: ${error.message}`);
-                }
-            }
+        } catch (error) {
+            console.error(`Error al buscar lugares cercanos: ${error.message}`);
+        }
+    }
         }
 
-        // Asignar la función 'mostrarLugaresCercanos' al evento 'click' del botón
-        document.getElementById('obtenerUbicacion').addEventListener('click', mostrarLugaresCercanos);
+        // Llamar a la función para mostrar los lugares cercanos al cargar la página
+        document.addEventListener('DOMContentLoaded', mostrarLugaresCercanos);
     </script>
+
+
+
+    <script>
+    document.getElementById('obtenerUbicacion').addEventListener('click', getGeolocalizacion)
+
+ 
+    </script>
+
 </body>
 </html>

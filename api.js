@@ -66,21 +66,24 @@ async function obtenerExtractoWikipedia(titulo) {
 async function getGeolocalizacion() {
     if ('geolocation' in navigator) {
         try {
+            // Uso de una promesa para manejar adecuadamente la geolocalización
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject, {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
+                    enableHighAccuracy: true, // Solicita la mejor precisión posible
+                    timeout: 10000, // Aumenta el tiempo de espera a 10 segundos
+                    maximumAge: 8000 // Acepta una posición almacenada en caché de hasta 8 segundos
                 });
             });
+            console.log(`Geolocalización obtenida: Latitud: ${position.coords.latitude}, Longitud: ${position.coords.longitude}`);
             return { lat: position.coords.latitude, lon: position.coords.longitude };
         } catch (error) {
             console.warn(`Error al obtener la geolocalización del usuario: ${error.message}`);
-            return obtenerUbicacionPorIP();
+            console.warn('Intentando obtener ubicación aproximada por IP...');
+            return await obtenerUbicacionPorIP(); // Espera y devuelve la ubicación por IP
         }
     } else {
-        console.warn('Geolocalización no es compatible con este navegador.');
-        return obtenerUbicacionPorIP();
+        console.warn('Geolocalización no es compatible con este navegador. Intentando ubicación por IP...');
+        return await obtenerUbicacionPorIP(); // Uso de await para esperar la respuesta de IP
     }
 }
 

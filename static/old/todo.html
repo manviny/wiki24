@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lugares de interés en Jávea</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #2980b9;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lugares de interés en Jávea</h1>
+    <ul id="lista-lugares"></ul>
+
+    <script>
+        // Función para obtener artículos de una categoría específica
+        async function obtenerArticulosDeCategoria(categoria) {
+            const url = `https://es.wikipedia.org/w/api.php?action=query&list=categorymembers&cmtitle=Categoría:${encodeURIComponent(categoria)}&cmlimit=50&format=json&origin=*`;
+            try {
+                const respuesta = await fetch(url);
+                const datos = await respuesta.json();
+                return datos.query.categorymembers || [];
+            } catch (error) {
+                console.error('Error al obtener artículos de la categoría:', error);
+                return [];
+            }
+        }
+
+        // Función para analizar el contenido del artículo de Jávea y extraer lugares de interés
+        async function extraerLugaresDeArticulo(titulo) {
+            const url = `https://es.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(titulo)}&prop=text&format=json&origin=*`;
+            try {
+                const respuesta = await fetch(url);
+                const datos = await respuesta.json();
+                const contenidoHTML = datos.parse.text['*'];
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(contenidoHTML, 'text/html');
+                const enlaces = doc.querySelectorAll('a');
+                const lugares = [];
+                enlaces.forEach(enlace => {
+                    const href = enlace.getAttribute('href');
+                    if (href && href.startsWith('/wiki/') && !href.includes(':')) {
+                        lugares.push({
+                            title: enlace.textContent,
+                            link: `https://es.wikipedia.org${href}`
+                        });
+                    }
+                });
+                return lugares;
+            } catch (error) {
+                console.error('Error al analizar el artículo:', error);
+                return [];
+            }
+        }
+
+        // Función principal para obtener y mostrar los lugares de interés
+        async function mostrarLugaresDeInteres() {
+            const lista = document.getElementById('lista-lugares');
+            lista.innerHTML = '';
+
+            // Obtener artículos de categorías específicas
+            const categorias = ['Jávea', 'Monumentos de Jávea', 'Playas de Jávea'];
+            let lugares = [];
+            for (const categoria of categorias) {
+                const articulos = await obtenerArticulosDeCategoria(categoria);
+                lugares = lugares.concat(articulos.map(articulo => ({
+                    title: articulo.title,
+                    link: `https://es.wikipedia.org/wiki/${encodeURIComponent(articulo.title)}`
+                })));
+            }
+
+            // Eliminar duplicados
+            const titulosUnicos = new Set();
+            lugares = lugares.filter(lugar => {
+                if (titulosUnicos.has(lugar.title)) {
+                    return false;
+                } else {
+                    titulosUnicos.add(lugar.title);
+                    return true;
+                }
+            });
+
+            // Mostrar los lugares en la página
+            lugares.forEach(lugar => {
+                const item = document.createElement('li');
+                const enlace = document.createElement('a');
+                enlace.href = lugar.link;
+                enlace.textContent = lugar.title;
+                enlace.target = '_blank';
+                item.appendChild(enlace);
+                lista.appendChild(item);
+            });
+        }
+
+        // Llamar a la función principal al cargar la página
+        mostrarLugaresDeInteres();
+    </script>
+</body>
+</html>

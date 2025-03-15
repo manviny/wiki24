@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página con Material Design 3</title>
+    <!-- Importar la fuente Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Importar Material Web Components desde un CDN -->
+    <script type="module" src="https://esm.run/@material/web/all.js"></script>
+    <!-- Importar estilos de tipografía de Material Design -->
+    <script type="module">
+        import {styles as typescaleStyles} from 'https://esm.run/@material/web/typography/styles.js';
+        document.adoptedStyleSheets = [typescaleStyles];
+    </script>
+    <!-- Estilos personalizados -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 16px;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-background);
+        }
+        h1 {
+            color: var(--md-sys-color-primary);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        md-outlined-card {
+            margin-top: 16px;
+            padding: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+
+    <button class="mdc-fab" aria-label="Favorite">
+        <span class="mdc-fab__icon material-icons">edit</span>
+    </button>
+        <md-fab label="Edit">
+            <md-icon slot="icon">edit</md-icon>
+        </md-fab>
+
+        <h1>Bienvenido a Material Design 3</h1>
+        <p>Esta es una página de ejemplo que utiliza Material Web Components.</p>
+        <!-- Botones de ejemplo -->
+        <div class="button-group">
+            <md-filled-button>Botón Relleno</md-filled-button>
+            <md-outlined-button>Botón Contorneado</md-outlined-button>
+            <md-tonal-button>Botón Tonal</md-tonal-button>
+            <md-text-button>Botón de Texto</md-text-button>
+        </div>
+        <!-- Campo de texto de ejemplo -->
+        <md-outlined-text-field label="Nombre"></md-outlined-text-field>
+        <!-- Selector de ejemplo -->
+        <md-outlined-select label="Opción">
+            <md-option value="1">Opción 1</md-option>
+            <md-option value="2">Opción 2</md-option>
+            <md-option value="3">Opción 3</md-option>
+        </md-outlined-select>
+        <!-- Tarjeta de ejemplo -->
+        <md-outlined-card>
+            <h2>Tarjeta de Ejemplo</h2>
+            <p>Esta es una tarjeta que utiliza los componentes de Material Design 3.</p>
+        </md-outlined-card>
+    </div>
+</body>
+</html>

@@ -13,6 +13,7 @@ if (isNode) {
 
 // Función para obtener coordenadas de una ciudad usando Nominatim (OpenStreetMap)
 async function obtenerCoordenadas(ciudad) {
+    mostrarLoader();
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(ciudad)}&format=json`;
     try {
         const response = await axios.get(url, {
@@ -27,10 +28,12 @@ async function obtenerCoordenadas(ciudad) {
         console.error(`Error al obtener coordenadas: ${error.message}`);
         return null; // En caso de error, devolver nulo
     }
+    ocultarLoader();
 }
 
 // Función para buscar lugares cercanos usando la API de MediaWiki
 async function buscarLugaresCercanos(lat, lon, radio = 5000) {
+    mostrarLoader();
     const url = `https://es.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${lat}|${lon}&gsradius=${radio}&gslimit=100&format=json&origin=*`;
     try {
         const response = await axios.get(url);
@@ -39,10 +42,12 @@ async function buscarLugaresCercanos(lat, lon, radio = 5000) {
         console.error(`Error al buscar lugares cercanos: ${error.message}`);
         return [];
     }
+    ocultarLoader();
 }
 
 // Función para obtener extracto e imagen de Wikipedia
 async function obtenerExtractoWikipedia(titulo) {
+    mostrarLoader();
     const url = `https://es.wikipedia.org/w/api.php?action=query&format=json&titles=${encodeURIComponent(titulo)}&prop=extracts|pageimages&exintro=true&explaintext=true&piprop=original|thumbnail&pithumbsize=640&origin=*`;
     try {
         const response = await axios.get(url);
@@ -60,10 +65,12 @@ async function obtenerExtractoWikipedia(titulo) {
         console.error(`Error al obtener información de Wikipedia: ${error.message}`);
         return { extracto: "Error al obtener información.", miniatura: 'https://via.placeholder.com/640x480?text=No+Image+Available' };
     }
+    ocultarLoader();
 }
 
 // Función para obtener la geolocalización del usuario
 async function getGeolocalizacion() {
+    mostrarLoader();
     if ('geolocation' in navigator) {
         try {
             // Uso de una promesa para manejar adecuadamente la geolocalización
@@ -85,10 +92,12 @@ async function getGeolocalizacion() {
         console.warn('Geolocalización no es compatible con este navegador. Intentando ubicación por IP...');
         return await obtenerUbicacionPorIP(); // Uso de await para esperar la respuesta de IP
     }
+    ocultarLoader();
 }
 
 // Función para obtener la ubicación por IP si falla la geolocalización
 async function obtenerUbicacionPorIP() {
+    mostrarLoader();
     try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
@@ -97,10 +106,12 @@ async function obtenerUbicacionPorIP() {
         console.error('La geolocalización basada en IP ha fallado:', error);
         return { lat: 0, lon: 0 }; // Devolver coordenadas neutrales en caso de error
     }
+    ocultarLoader();
 }
 
 // Función para mostrar lugares cercanos en la interfaz de usuario
 async function mostrarLugaresCercanos(ciudad = "") {
+    mostrarLoader();
     let lat, lon;
 
     if (ciudad) {
@@ -138,6 +149,7 @@ async function mostrarLugaresCercanos(ciudad = "") {
     } else {
         console.error("No se pudo obtener la ubicación para buscar lugares cercanos.");
     }
+    ocultarLoader();
 }
 
 // Función para inicializar los eventos de la interfaz de usuario
@@ -162,4 +174,16 @@ if (!isNode) {
 // Inicializar eventos UI cuando el script se carga en un navegador
 if (typeof window !== 'undefined') {
     inicializarEventosUI();
+}
+
+
+
+// Función para mostrar el loader
+function mostrarLoader() {
+    document.getElementById('loader').style.display = 'flex';
+}
+
+// Función para ocultar el loader
+function ocultarLoader() {
+    document.getElementById('loader').style.display = 'none';
 }

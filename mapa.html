@@ -9,6 +9,10 @@
 
 </head>
 <body>
+    <div id="loader" class="loader-overlay">
+        <div class="loader"></div>
+    </div>
+
     <div id="map"></div>
     <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -20,6 +24,7 @@
 
     <script>
  async function cargarLugaresYMostrarMapa() {
+     mostrarLoader();
     const posicion = await getGeolocalizacion();
     const lugares = await buscarLugaresCercanos(posicion.lat, posicion.lon);
 
@@ -106,6 +111,7 @@
         this.blur();
         return false;
     };
+     ocultarLoader();
 }
 
 document.addEventListener('DOMContentLoaded', cargarLugaresYMostrarMapa);   

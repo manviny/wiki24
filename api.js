@@ -13,41 +13,43 @@ if (isNode) {
 
 // Función para obtener coordenadas de una ciudad usando Nominatim (OpenStreetMap)
 async function obtenerCoordenadas(ciudad) {
-   
+    mostrarLoader();
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(ciudad)}&format=json`;
     try {
         const response = await axios.get(url, {
             headers: isNode ? { "User-Agent": "MiAplicacion/1.0" } : {}
         });
         if (response.data.length > 0) {
+            ocultarLoader();
             return { lat: response.data[0].lat, lon: response.data[0].lon };
         } else {
+            ocultarLoader();
             throw new Error("No se encontraron coordenadas para la ciudad especificada.");
         }
     } catch (error) {
         console.error(`Error al obtener coordenadas: ${error.message}`);
+        // ocultarLoader();
         return null; // En caso de error, devolver nulo
     }
-   
 }
 
 // Función para buscar lugares cercanos usando la API de MediaWiki
 async function buscarLugaresCercanos(lat, lon, radio = 10000) {
-   
+    mostrarLoader();
     const url = `https://es.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${lat}|${lon}&gsradius=${radio}&gslimit=100&format=json&origin=*`;
     try {
         const response = await axios.get(url);
+        ocultarLoader();
         return response.data.query.geosearch || [];
     } catch (error) {
+        ocultarLoader();
         console.error(`Error al buscar lugares cercanos: ${error.message}`);
         return [];
     }
-   
 }
 
 // Función para obtener extracto e imagen de Wikipedia
 async function obtenerExtractoWikipedia(titulo) {
-   
     const url = `https://es.wikipedia.org/w/api.php?action=query&format=json&titles=${encodeURIComponent(titulo)}&prop=extracts|pageimages&exintro=true&explaintext=true&piprop=original|thumbnail&pithumbsize=640&origin=*`;
     try {
         const response = await axios.get(url);
@@ -65,12 +67,10 @@ async function obtenerExtractoWikipedia(titulo) {
         console.error(`Error al obtener información de Wikipedia: ${error.message}`);
         return { extracto: "Error al obtener información.", miniatura: 'https://via.placeholder.com/640x480?text=No+Image+Available' };
     }
-   
 }
 
 // Función para obtener la geolocalización del usuario
 async function getGeolocalizacion() {
-   
     if ('geolocation' in navigator) {
         try {
             // Uso de una promesa para manejar adecuadamente la geolocalización
@@ -92,12 +92,10 @@ async function getGeolocalizacion() {
         console.warn('Geolocalización no es compatible con este navegador. Intentando ubicación por IP...');
         return await obtenerUbicacionPorIP(); // Uso de await para esperar la respuesta de IP
     }
-   
 }
 
 // Función para obtener la ubicación por IP si falla la geolocalización
 async function obtenerUbicacionPorIP() {
-   
     try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
@@ -106,12 +104,10 @@ async function obtenerUbicacionPorIP() {
         console.error('La geolocalización basada en IP ha fallado:', error);
         return { lat: 0, lon: 0 }; // Devolver coordenadas neutrales en caso de error
     }
-   
 }
 
 // Función para mostrar lugares cercanos en la interfaz de usuario
 async function mostrarLugaresCercanos(ciudad = "") {
-   
     let lat, lon;
 
     if (ciudad) {
@@ -149,19 +145,16 @@ async function mostrarLugaresCercanos(ciudad = "") {
     } else {
         console.error("No se pudo obtener la ubicación para buscar lugares cercanos.");
     }
-   
 }
 
 // Función para inicializar los eventos de la interfaz de usuario
 function inicializarEventosUI() {
-    mostrarLoader();
     const btnObtenerUbicacion = document.getElementById('obtenerUbicacion');
     if (btnObtenerUbicacion) {
         btnObtenerUbicacion.addEventListener('click', () => mostrarLugaresCercanos());
     }
 
     document.addEventListener('DOMContentLoaded', () => mostrarLugaresCercanos()); // Mostrar lugares cercanos al cargar la página sin necesidad de una ciudad específica
-    ocultarLoader();
 }
 
 // Exportar funciones según el entorno
@@ -175,6 +168,7 @@ if (!isNode) {
 
 // Inicializar eventos UI cuando el script se carga en un navegador
 if (typeof window !== 'undefined') {
+    ocultarLoader()
     inicializarEventosUI();
 }
 

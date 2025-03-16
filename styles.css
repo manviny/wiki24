@@ -236,3 +236,29 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }        
+
+
+/* SEARCHBAR*/
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f1f1f1;
+    padding: 8px 12px;
+    border-radius: 24px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .search-bar .material-symbols-outlined {
+    font-size: 24px;
+    color: #757575;
+  }
+  
+  .search-bar input {
+    border: none;
+    background: none;
+    margin-left: 8px;
+    outline: none;
+    flex-grow: 1;
+    font-size: 16px;
+  }

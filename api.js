@@ -32,7 +32,7 @@ async function obtenerCoordenadas(ciudad) {
 }
 
 // Función para buscar lugares cercanos usando la API de MediaWiki
-async function buscarLugaresCercanos(lat, lon, radio = 5000) {
+async function buscarLugaresCercanos(lat, lon, radio = 15000) {
    
     const url = `https://es.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${lat}|${lon}&gsradius=${radio}&gslimit=100&format=json&origin=*`;
     try {

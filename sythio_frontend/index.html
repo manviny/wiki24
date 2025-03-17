@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lugares Cercanos</title>
+    <!-- Incluir Google Icons y Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Incluir CSS de Material Design Components Web -->
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="mdc-top-app-bar">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button>
+                <span class="mdc-top-app-bar__title">Lugares Cercanos</span>
+            </section>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Bienvenido a Lugares Cercanos</h1>
+        <p>Explora puntos de interés en tu área o en cualquier lugar que desees.</p>
+        <!-- Botón flotante de acción principal -->
+        <button class="mdc-fab" aria-label="Buscar">
+            <span class="mdc-fab__icon material-icons">search</span>
+        </button>
+    </div>
+
+    <footer class="mdc-bottom-navigation">
+        <div class="mdc-bottom-navigation__list">
+            <a href="#" class="mdc-bottom-navigation__list-item mdc-bottom-navigation__list-item--activated">
+                <span class="material-icons mdc-bottom-navigation__list-item__icon">home</span>
+                <span class="mdc-bottom-navigation__list-item__text">Inicio</span>
+            </a>
+            <a href="#" class="mdc-bottom-navigation__list-item">
+                <span class="material-icons mdc-bottom-navigation__list-item__icon">place</span>
+                <span class="mdc-bottom-navigation__list-item__text">Mapa</span>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Cargar los componentes de Material Design -->
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>
+        mdc.autoInit();
+    </script>
+</body>
+</html>

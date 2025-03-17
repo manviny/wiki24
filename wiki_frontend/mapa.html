@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Puntos de Interés</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.4.0/ol.css" type="text/css">
+    <link href="styles.css" rel="stylesheet">
+
+</head>
+<body>
+    <div id="loader" class="loader-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <div id="map"></div>
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v10.4.0/dist/ol.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="api.js"></script>
+
+    <script>
+ async function cargarLugaresYMostrarMapa() {
+     mostrarLoader();
+    const posicion = await getGeolocalizacion();
+    const lugares = await buscarLugaresCercanos(posicion.lat, posicion.lon);
+
+    // Fuente para los lugares de interés y tu posición
+    const source = new ol.source.Vector({
+        features: lugares.map(lugar => {
+            const feature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([lugar.lon, lugar.lat])),
+                name: lugar.title
+            });
+            return feature;
+        })
+    });
+
+    // Crear la característica de tu posición con un estilo único
+    const posFeature = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat([posicion.lon, posicion.lat])),
+        name: 'Tu posición'
+    });
+    posFeature.setStyle(new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 46],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            src: 'https://cdn-icons-png.flaticon.com/512/252/252039.png', // Asegúrate de que la URL del icono es correcta
+            scale: 0.05 // Ajusta el tamaño del icono
+        })
+    }));
+
+    // Añadir la característica de tu posición a la fuente de datos
+    source.addFeature(posFeature);
+
+            const layer = new ol.layer.Vector({
+                source: source,
+                style: new ol.style.Style({
+                    image: new ol.style.Icon({
+                        anchor: [0.5, 46],
+                        anchorXUnits: 'fraction',
+                        anchorYUnits: 'pixels',
+                        src: 'https://cdn-icons-png.flaticon.com/512/252/252025.png', // URL de un icono personalizado
+                        scale: 0.05 // Ajusta el tamaño del icono según necesites
+                    })
+                })
+            });
+
+    const overlay = new ol.Overlay({
+        element: document.getElementById('popup'),
+        autoPan: true,
+        autoPanAnimation: {
+            duration: 250
+        }
+    });
+
+    const map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            }),
+            layer
+        ],
+        overlays: [overlay],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([posicion.lon, posicion.lat]),
+            zoom: 14
+        })
+    });
+
+    map.on('singleclick', function(evt) {
+        const feature = map.forEachFeatureAtPixel(evt.pixel, function(feature) {
+            return feature;
+        });
+        if (feature) {
+            const coordinates = feature.getGeometry().getCoordinates();
+            overlay.setPosition(coordinates);
+            
+            const title = feature.get('name') || 'Desconocido';
+            const url = `https://es.wikipedia.org/wiki/${encodeURIComponent(title)}`; // URL de la página de Wikipedia
+            document.getElementById('popup-content').innerHTML = `<a href="${url}" target="_blank">${title}</a>`; // Enlace en el popup
+        }
+    });
+
+    document.getElementById('popup-closer').onclick = function() {
+        overlay.setPosition(undefined);
+        this.blur();
+        return false;
+    };
+     ocultarLoader();
+}
+
+document.addEventListener('DOMContentLoaded', cargarLugaresYMostrarMapa);   
+    </script>
+</body>
+</html>

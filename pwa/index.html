@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Send Message</title>
+    <title>Enviar Mensaje</title>
 </head>
 <body>
     <h1>Enviar mensaje</h1>
     <form id="messageForm">
         <input type="text" id="messageInput" placeholder="Escribe tu mensaje aquí..." required>
+        <!-- Campos ocultos para almacenar la latitud y longitud -->
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
         <button type="submit">Enviar mensaje</button>
     </form>
     <div id="responseMessage"></div>
 
+    <h2>Lista de Mensajes</h2>
+    <ul id="messageList"></ul> <!-- Lista donde se mostrarán los mensajes -->
+
+    <!-- Colocar el script aquí al final -->
     <script src="app.js"></script>
 </body>
 </html>

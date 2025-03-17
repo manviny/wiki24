@@ -28,6 +28,7 @@ class MessageCreate(BaseModel):
     latitude: float = 0  # Valores predeterminados en caso de que no se pasen
     longitude: float = 0
 
+# DESCOMENTAR SI SE QUIERE BORRAR LA BD
 # Base.metadata.create_all(bind=engine)
 
 # Configuración de CORS
@@ -67,3 +68,17 @@ def read_messages():
             "location": str(m.location)
         } for m in result]
         return {"messages": messages}
+
+@app.delete("/delete/{message_id}")
+def delete_message(message_id: int):
+    try:
+        with SessionLocal() as session:
+            message = session.query(Message).filter(Message.id == message_id).first()
+            if not message:
+                raise HTTPException(status_code=404, detail="Message not found")
+            
+            session.delete(message)
+            session.commit()
+        return {"message": "Message deleted successfully"}
+    except Exception as e:
+        return HTTPException(status_code=500, detail=str(e))    

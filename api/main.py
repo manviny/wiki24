@@ -29,7 +29,7 @@ class MessageCreate(BaseModel):
     longitude: float = 0
 
 # DESCOMENTAR SI SE QUIERE BORRAR LA BD
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 # Configuración de CORS
 app.add_middleware(

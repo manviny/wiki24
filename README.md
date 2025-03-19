@@ -1,3 +1,8 @@
+# Sythio
+- ngrok http 80
+
+
+
 # wiki24
 
 - arreglar js y poner comentarios
